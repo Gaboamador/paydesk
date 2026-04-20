@@ -4,13 +4,12 @@ import { guardarPlanilla, obtenerDatosUsuario } from "../../utils/firestoreHelpe
 import UserContext from "../../context/userContext";
 import styles from './estilos/tablaCuentas.module.scss'
 import getValoresMapping from "../../utils/valoresMapping";
-import ModalValores from "../ModalValores";
 import formatearMes from "../../utils/formatearMes";
 import { FiEdit } from "react-icons/fi";
 import textos from "../../utils/textos";
 import CopiarDropdown from "../CopiarDropdown";
 
-export default function TablaCuentas({ planilla, onGuardar, onEliminar, mostrarModal, setMostrarModal }) {
+export default function TablaCuentas({ planilla, onGuardar, onEliminar, onOpenModal }) {
   const { user } = useContext(UserContext);
   const [direccion, setDireccion] = useState(null)
     const [detalle, setDetalle] = useState(null)
@@ -119,7 +118,7 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
           {formatearMes(planilla.mes).toUpperCase()}
         </div>
           
-        <button className={`btn btn--primario ${styles.ingresarDatosButton}`} onClick={() => setMostrarModal(true)}>
+        <button className={`btn btn--primario ${styles.ingresarDatosButton}`} onClick={onOpenModal}>
           <span><FiEdit/></span>
           <span>Ingresar datos</span>
         </button>
@@ -277,15 +276,6 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
       </div>
 
     </div>
-
-    {mostrarModal && (
-      <ModalValores
-        valores={valores}
-        setValores={setValores}
-        onClose={() => setMostrarModal(false)}
-        mesActual={planilla.mes}
-      />
-    )}
 </div>
   );
 }
