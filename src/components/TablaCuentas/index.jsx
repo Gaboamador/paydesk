@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
+import { createPortal } from "react-dom";
 import { calcularFormulas } from "../../utils/formulas";
 import { guardarPlanilla, obtenerDatosUsuario } from "../../utils/firestoreHelper";
 import UserContext from "../../context/userContext";
 import styles from './estilos/tablaCuentas.module.scss'
 import getValoresMapping from "../../utils/valoresMapping";
+import ModalValores from "../ModalValores";
 import formatearMes from "../../utils/formatearMes";
 import { FiEdit } from "react-icons/fi";
 import textos from "../../utils/textos";
 import CopiarDropdown from "../CopiarDropdown";
 
-export default function TablaCuentas({ planilla, onGuardar, onEliminar, onOpenModal }) {
+export default function TablaCuentas({ planilla, onGuardar, onEliminar }) {
   const { user } = useContext(UserContext);
   const [direccion, setDireccion] = useState(null)
     const [detalle, setDetalle] = useState(null)
@@ -30,7 +32,7 @@ const [valores, setValores] = useState(() => {
   return inicial;
 });
 
-// const [mostrarModal, setMostrarModal] = useState(false);
+const [mostrarModal, setMostrarModal] = useState(false);
 const [resultados, setResultados] = useState(planilla.data?.resultados || {});
 
 useEffect(() => {
@@ -117,8 +119,7 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
         <div className={styles.tituloTabla}>
           {formatearMes(planilla.mes).toUpperCase()}
         </div>
-          
-        <button className={`btn btn--primario ${styles.ingresarDatosButton}`} onClick={onOpenModal}>
+          <button  className={`btn btn--primario ${styles.ingresarDatosButton}`} onClick={() => setMostrarModal(true)}>
           <span><FiEdit/></span>
           <span>Ingresar datos</span>
         </button>
@@ -276,6 +277,16 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
       </div>
 
     </div>
+
+    {mostrarModal && createPortal(
+      <ModalValores
+        valores={valores}
+        setValores={setValores}
+        onClose={() => setMostrarModal(false)}
+        mesActual={planilla.mes}
+      />,
+      document.body  // se renderiza directo en el body, fuera del Swiper
+    )}
 </div>
   );
 }

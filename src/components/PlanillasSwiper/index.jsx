@@ -3,7 +3,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
 import { obtenerTodasLasPlanillas, eliminarPlanilla } from "../../utils/firestoreHelper";
 import TablaCuentas from "../TablaCuentas";
-import ModalValores from "../ModalValores";
 import UserContext from "../../context/userContext";
 import formatearMes from "../../utils/formatearMes";
 import styles from './estilos/planillasSwiper.module.scss'
@@ -18,7 +17,7 @@ export default function PlanillasSwiper() {
   const [nuevoMes, setNuevoMes] = useState("");
   const [nuevoAnio, setNuevoAnio] = useState(new Date().getFullYear());
   const swiperRef = useRef(null);
-  const [planillaModal, setPlanillaModal] = useState(null);
+  // const [planillaModal, setPlanillaModal] = useState(null);
 
   const meses = ["01","02","03","04","05","06","07","08","09","10","11","12"];
 
@@ -136,7 +135,6 @@ const handleEliminarPlanilla = async (mesAEliminar) => {
 
 
   // if (!user) return <p className={styles.notLoggedIn}>Inicie sesión para ver sus planillas</p>;
-const [mostrarModal, setMostrarModal] = useState(false);
 
   return (
       <div>
@@ -194,25 +192,11 @@ const [mostrarModal, setMostrarModal] = useState(false);
                 planilla={planilla}
                 onGuardar={handleGuardarLocal}
                 onEliminar={handleEliminarPlanilla}
-                // mostrarModal={mostrarModal}
-                // setMostrarModal={setMostrarModal}
-                onOpenModal={() => setPlanillaModal(planilla)}
               />
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {planillaModal && (
-        <ModalValores
-          valores={planillaModal.data?.valores || {}}
-          setValores={(vals) => {
-            // opcional: actualizar estado local si querés
-          }}
-          mesActual={planillaModal.mes}
-          onClose={() => setPlanillaModal(null)}
-        />
-      )}
     </div>
   );
 }

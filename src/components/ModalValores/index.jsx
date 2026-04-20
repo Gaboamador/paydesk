@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import UserContext from '../../context/userContext'
 import getValoresMapping from "../../utils/valoresMapping";
 import { obtenerDatosUsuario } from "../../utils/firestoreHelper";
@@ -16,7 +16,8 @@ export default function ModalValores({ valores, setValores, onClose, mesActual }
   const { user } = useContext(UserContext);
   const [depto, setDepto] = useState(null)
   const [cochera, setCochera] = useState(null)
-  const valoresMapping = getValoresMapping(depto, cochera);
+  // const valoresMapping = getValoresMapping(depto, cochera);
+  const valoresMapping = useMemo(() => getValoresMapping(depto, cochera), [depto, cochera]);
   useEffect(() => {
       if (!user) return;
 
@@ -36,6 +37,8 @@ export default function ModalValores({ valores, setValores, onClose, mesActual }
   // Inicializamos valores con formato (coma + puntos) o vacíos
   useEffect(() => {
   // if (!valores || Object.keys(valoresMapping).length === 0) return;
+  if (Object.keys(valoresMapping).length === 0) return;
+
   const inicial = {};
   const inicialVenc = {};
   Object.keys(valoresMapping).forEach((key) => {
@@ -58,7 +61,7 @@ export default function ModalValores({ valores, setValores, onClose, mesActual }
   });
   setLocalValores(inicial);
   setLocalVencimientos(inicialVenc);
-}, [valores]);
+}, [valores, valoresMapping]);
 
   // Convierte texto con puntos y coma a número real
   const parseNumero = (texto) => {
