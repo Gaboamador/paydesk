@@ -1,30 +1,24 @@
 import React, {useContext} from 'react';
 import './App.scss';
-import GlobalState from './globalState';
-import Context from './context';
 import styles from './styles/app.module.scss';
-import PlanillasSwiper from './components/PlanillasSwiper';
+import PlanillasApp from './components/PlanillasSwiper';
 import Header from './common/Header';
 import Auth from './components/Auth';
-import UserContext from './context/userContext';
-import FaviconUpdater from './components/FaviconUpdater';
-
-
+import UserContext from './context/userContext.jsx';
+import { HashRouter } from 'react-router-dom';
 function App() {
-const { user } = useContext(UserContext);
-const context = useContext(Context)
+const { user, loading } = useContext(UserContext);
   return (
-    <GlobalState>
-      <div className={styles.App}>
-        {/* <FaviconUpdater primary={context.paleta.primario} secondary={context.paleta.secundario} tertiary={context.paleta.terciario} /> */}
+    <HashRouter>
+      <div className={styles.app}>
         <Header/>
-        {!user ? (
-        <Auth/>
-        ):(
-        <PlanillasSwiper/>
-        )}
+        <main className={styles.main}>
+          {loading ? (
+            <div className={styles.loading} role="status">Cargando PayDesk…</div>
+          ) : !user ? <Auth/> : <PlanillasApp/>}
+        </main>
       </div>
-    </GlobalState>
+    </HashRouter>
   );
 }
 

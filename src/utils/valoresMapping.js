@@ -1,7 +1,7 @@
 const getValoresMapping = (depto, cochera) => ({
   colchon: { label: "Colchón", group: "colchon" },
   cajaAhorroActual: { label: "Caja ahorro actual", group: "inicio" },
-  visaBBVATotalResumen: { label: "VISA (Total resumen)", group: "bbva" },
+  visaBBVATotalResumen: { label: "Total resumen", group: "bbva" },
   dbRg5617: { label: "DB.RG 5617 30%", group: "bbva" },
   mcBBVA: { label: "MasterCard", group: "bbva" },
   visaBNA: { label: "VISA", group: "bna" },

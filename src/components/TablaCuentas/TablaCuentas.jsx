@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useContext } from "react";
-import { createPortal } from "react-dom";
 import { calcularFormulas } from "../../utils/formulas";
-import { guardarPlanilla, obtenerDatosUsuario } from "../../utils/firestoreHelper";
 import UserContext from "../../context/userContext";
-import styles from './estilos/tablaCuentas.module.scss'
+import styles from './TablaCuentas.module.scss'
 import getValoresMapping from "../../utils/valoresMapping";
-import ModalValores from "../ModalValores";
 import formatearMes from "../../utils/formatearMes";
 import { FiEdit } from "react-icons/fi";
 import textos from "../../utils/textos";
 import CopiarDropdown from "../CopiarDropdown";
+import { useNavigate } from "react-router-dom";
 
-export default function TablaCuentas({ planilla, onGuardar, onEliminar }) {
-  const { user } = useContext(UserContext);
-  const [direccion, setDireccion] = useState(null)
-    const [detalle, setDetalle] = useState(null)
-    const [depto, setDepto] = useState(null)
-    const [cochera, setCochera] = useState(null)
-    const [nombre, setNombre] = useState(null)
+export default function TablaCuentas({ planilla, onEliminar }) {
+  const { profile } = useContext(UserContext);
+  const navigate = useNavigate();
+  const direccion = profile?.direccion;
+  const depto = profile?.depto;
+  const cochera = profile?.cochera;
+  const nombre = profile?.nombre;
+  const detalle = profile ? `${depto} + ${cochera}` : "";
 
   const valoresMapping = getValoresMapping(depto, cochera);
 const [valores, setValores] = useState(() => {
-  const inicial = planilla.data?.valores || Object.keys(valoresMapping).reduce((acc, key) => {
+  const inicial = planilla.data?.valores ? { ...planilla.data.valores } : Object.keys(valoresMapping).reduce((acc, key) => {
     acc[key] = "";
     return acc;
   }, {});
@@ -32,11 +31,10 @@ const [valores, setValores] = useState(() => {
   return inicial;
 });
 
-const [mostrarModal, setMostrarModal] = useState(false);
 const [resultados, setResultados] = useState(planilla.data?.resultados || {});
 
 useEffect(() => {
-  const inicial = planilla.data?.valores || Object.keys(valoresMapping).reduce((acc, key) => {
+  const inicial = planilla.data?.valores ? { ...planilla.data.valores } : Object.keys(valoresMapping).reduce((acc, key) => {
     acc[key] = "";
     return acc;
   }, {});
@@ -54,15 +52,6 @@ useEffect(() => {
   setResultados(calcularFormulas(valores));
 }, [valores]);
 
-
-  const handleGuardar = async () => {
-    if (!user) return alert("Debes iniciar sesión");
-    await guardarPlanilla(user.uid, planilla.mes, { valores, resultados });
-    alert(`Planilla de ${planilla.mes} guardada correctamente!`);
-
-    // Avisamos al componente padre que ya se guardó
-    onGuardar(planilla.mes, { valores, resultados });
-  };
 
   const fmt = (n) => 
     n === undefined || n === null || Number.isNaN(Number(n)) 
@@ -97,21 +86,6 @@ const obtenerMesAnterior = (mesActual) => {
 const mesAnterior = obtenerMesAnterior(planilla.mes);
 
     
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchPerfil = async () => {
-      const data = await obtenerDatosUsuario(user.uid);
-      setDireccion(data.direccion);
-      setDetalle(`${data.depto} + ${data.cochera}`)
-      setDepto(data.depto)
-      setCochera(data.cochera)
-      setNombre(data.nombre)
-    };
-
-    fetchPerfil();
-  }, [user]);
-        
   return (
   <div>
     <div className={styles.tablaCuentasContainer}>
@@ -119,7 +93,7 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
         <div className={styles.tituloTabla}>
           {formatearMes(planilla.mes).toUpperCase()}
         </div>
-          <button  className={`btn btn--primario ${styles.ingresarDatosButton}`} onClick={() => setMostrarModal(true)}>
+          <button className={`btn btn--primario ${styles.ingresarDatosButton}`} onClick={() => navigate(`/planillas/${planilla.mes}/editar`)}>
           <span><FiEdit/></span>
           <span>Ingresar datos</span>
         </button>
@@ -262,15 +236,8 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
 
       <div className={styles.botonesPlanilla}>
         <button
-          className={`btn btn--primario ${styles.guardarPlanillaButton}`}
-          onClick={handleGuardar}
-        >
-          Guardar planilla
-        </button>
-
-        <button
-          className={`btn btn--secundario ${styles.eliminarPlanillaButton}`}
-          onClick={() => onEliminar(planilla.mes)}
+          className={`btn btn--danger ${styles.eliminarPlanillaButton}`}
+          onClick={onEliminar}
         >
           Eliminar planilla
         </button>
@@ -278,15 +245,6 @@ const mesAnterior = obtenerMesAnterior(planilla.mes);
 
     </div>
 
-    {mostrarModal && createPortal(
-      <ModalValores
-        valores={valores}
-        setValores={setValores}
-        onClose={() => setMostrarModal(false)}
-        mesActual={planilla.mes}
-      />,
-      document.body  // se renderiza directo en el body, fuera del Swiper
-    )}
 </div>
   );
 }

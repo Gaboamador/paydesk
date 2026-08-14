@@ -1,0 +1,23 @@
+@use '../../styles/variables' as *;
+@use '../../styles/theme-mixins' as *;
+
+.dropdown { position: relative; display: inline-block; }
+.botonPrincipal { width: fit-content; box-shadow: none; }
+.flecha { @include font-size(sm); color: $color-text-muted; }
+.menu {
+  position: absolute;
+  top: calc(100% + .4rem);
+  right: 0;
+  z-index: 30;
+  min-width: 12rem;
+  overflow: hidden;
+  background: $color-surface-raised;
+  border: 1px solid $color-border-strong;
+  border-radius: 10px;
+  box-shadow: 0 16px 38px $color-shadow-strong;
+  animation: fadeIn .15s ease-out;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.item { display: block; width: 100%; padding: .7rem .8rem; color: $color-text-muted; background: transparent; border: 0; text-align: left; cursor: pointer; transition: background .15s, color .15s; @include font-size(md); }
+.item + .item { border-top: 1px solid $color-border; }
+.item:hover, .item:focus-visible { color: $color-text; background: $color-surface-hover; }

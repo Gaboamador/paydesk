@@ -6,11 +6,10 @@ function GlobalState(props){
     const root = document.documentElement;
     
     const paleta = {
-    primario: getComputedStyle(root).getPropertyValue('--color-primario'),
-    secundario: getComputedStyle(root).getPropertyValue('--color-secundario'),
-    terciario: getComputedStyle(root).getPropertyValue('--color-terciario'),
-    textoClaro: getComputedStyle(root).getPropertyValue('--color-texto-claro'),
-    textoOscuro: getComputedStyle(root).getPropertyValue('--color-texto-oscuro'),
+    primary: getComputedStyle(root).getPropertyValue('--color-primary'),
+    secondary: getComputedStyle(root).getPropertyValue('--color-secondary'),
+    tertiary: getComputedStyle(root).getPropertyValue('--color-tertiary'),
+    text: getComputedStyle(root).getPropertyValue('--color-text'),
     };
 
     return(

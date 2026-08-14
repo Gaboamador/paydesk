@@ -1,0 +1,35 @@
+@use '../../styles/variables' as *;
+@use '../../styles/theme-mixins' as *;
+
+.appPlanillas { width: 100%; }
+.controles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .6rem;
+  max-width: 780px;
+  margin: 0 auto 1.25rem;
+  padding: .7rem;
+  background: $color-surface-raised;
+  border: 1px solid $color-border;
+  border-radius: 13px;
+  box-shadow: 0 10px 28px $color-shadow;
+  select { margin: 0; text-transform: capitalize; background: $color-surface-raised; border: 1px solid $color-primary;}
+  :global(.btn) { margin: 0; }
+}
+.navMes { min-height: 40px; padding: .4rem .65rem; color: $color-text-muted; background: $color-surface-muted; border: 1px solid $color-border; border-radius: 8px; cursor: pointer; transition: color .2s, background .2s; }
+.navMes:first-child { text-align: left; }
+.navMes:nth-child(3) { text-align: right; }
+.navMes:hover:not(:disabled) { color: $color-text; background: $color-surface-hover; }
+.navMes:disabled { color: $color-text-subtle; opacity: .35; cursor: default; }
+.mensaje, .estado { max-width: 780px; margin: 0 auto 1rem; padding: .9rem 1rem; border-radius: 11px; text-align: center; border: 1px solid $color-border; box-shadow: 0 8px 22px $color-shadow; }
+.estado { color: $color-text-muted; background: $color-surface-raised; :global(.btn) { margin: 1rem auto 0; } }
+.exito { color: $color-text; background: rgba($color-dolares, .22); border-color: rgba($color-dolares, .65); }
+.error { color: $color-text; background: rgba($color-danger, .18); border-color: rgba($color-danger, .55); }
+.nuevaPage { width: min(100%, 560px); margin: 2rem auto; padding: clamp(1rem, 4vw, 2rem); color: $color-text; background: linear-gradient(145deg, $color-surface-raised, $color-surface); border: 1px solid $color-border-strong; border-radius: 16px; box-shadow: 0 22px 58px $color-shadow-strong; }
+.nuevaPage h1 { margin-top: 0; color: $color-text; font-family: $family-font-title; }
+.nuevaPage p { color: $color-text-muted; }
+.nuevaForm { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; label { display: grid; gap: .4rem; color: $color-text-muted; font-weight: 600; } select { width: 100%; margin: 0; text-transform: capitalize; } .error, .acciones { grid-column: 1 / -1; } }
+.acciones { display: flex; justify-content: flex-end; gap: .75rem; }
+@include media-down(md) { .controles { grid-template-columns: 1fr auto 1fr; } .controles > :global(.btn) { grid-column: 1 / -1; width: 100%; } }
+@include media-down(sm) { .navMes { min-height: 40px; padding: .35rem .5rem; font-size: .82rem; } .navMes span { display: none; } .nuevaForm { grid-template-columns: 1fr; } .nuevaForm .error, .nuevaForm .acciones { grid-column: 1; } .acciones { flex-direction: column-reverse; } .acciones :global(.btn) { width: 100%; } }

@@ -1,16 +1,7 @@
 @use './variables' as *;
-@use './theme-mixins' as *;
 
-.App {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.main { flex: 1 0 auto; width: min(100% - 2rem, 960px); margin: 0 auto; padding: 1.5rem 0 2rem; }
+.loading { min-height: 50vh; display: grid; place-items: center; color: $color-text-muted; font-family: $family-font-title; }
 
-main {
-  flex: 1 0 auto; /* ocupa el espacio disponible */
-}
-
-.AppFooter {
-  margin-top: auto; /* empuja footer al fondo */
-}
+@media (max-width: 576px) { .main { width: min(100% - 1rem, 960px); padding-top: 1rem; } }

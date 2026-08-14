@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import styles from "./estilos/copiarDropdown.module.scss";
+import styles from "./CopiarDropdown.module.scss";
 
 export default function CopiarDropdown({ opciones }) {
   const [abierto, setAbierto] = useState(false);
@@ -17,31 +17,36 @@ export default function CopiarDropdown({ opciones }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleClick = (texto, label) => {
-    navigator.clipboard.writeText(texto);
-    // alert("Copiado al portapapeles!");
-    setCopiadoLabel(label);
-    setTimeout(() => setCopiadoLabel(null), 1000);
+  const handleClick = async (texto, label) => {
+    try {
+      await navigator.clipboard.writeText(texto);
+      setCopiadoLabel(`${label} copiado`);
+    } catch {
+      setCopiadoLabel("No se pudo copiar");
+    }
+    setTimeout(() => setCopiadoLabel(null), 1500);
     setAbierto(false);
   };
 
   return (
     <div className={styles.dropdown} ref={dropdownRef}>
-      <button className={`btn btn--secundario ${styles.botonPrincipal}`} onClick={() => setAbierto(!abierto)}>
-        {copiadoLabel ? `${copiadoLabel} copiado!` : 'Copiar...'}
+      <button className={`btn btn--secundario ${styles.botonPrincipal}`} onClick={() => setAbierto(!abierto)} aria-expanded={abierto} aria-haspopup="menu">
+        {copiadoLabel || 'Copiar'}
         <span className={styles.flecha}>{abierto ? "▲" : "▼"}</span>
       </button>
 
       {abierto && (
-        <div className={styles.menu}>
+        <div className={styles.menu} role="menu">
           {opciones.map((op) => (
-            <div
+            <button
+              type="button"
               key={op.label}
               className={styles.item}
               onClick={() => handleClick(op.texto, op.label)}
+              role="menuitem"
             >
             {op.label}
-            </div>
+            </button>
           ))}
         </div>
       )}

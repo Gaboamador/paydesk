@@ -1,64 +1,98 @@
+@use 'sass:color';
 @use './styles/variables.scss' as *;
-@use './styles/theme-mixins.scss' as *;
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { color-scheme: dark; background: $color-background; }
 
 body {
   margin: 0;
   overflow-y: scroll;
-  font-family: $fuente-contenidos, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: $family-font-content, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background:
+    radial-gradient(circle at 50% -20%, rgba($color-primary, .13), transparent 38rem),
+    $color-background;
+  color: $color-text;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button, input, select, textarea { font: inherit; }
+
+:focus-visible {
+  outline: 3px solid rgba($color-tertiary, .72);
+  outline-offset: 2px;
 }
 
- select, input, button, textarea {
-  font-family: inherit;
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  min-height: 40px;
+  width: max-content;
+  padding: .55rem .9rem;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  text-align: center;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 4px 12px $color-shadow;
+  transition: background-color .2s, border-color .2s, transform .1s, box-shadow .2s, opacity .2s;
+
+  &:hover:not(:disabled) { box-shadow: 0 7px 18px $color-shadow-strong; }
+  &:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 7px $color-shadow; }
+  &:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
 }
 
-.btn {     
-display: flex; 
- gap: 0.5rem;
- border: none;
- border: 1px solid $color-secundario-oscuro;
- border-radius: 5px;
- padding: 0.25rem 0.5rem;
- margin: 0.5rem 0;
- width: min-content;
- align-items: center;
- text-align: left;
- cursor: pointer;
- }
-
- .btn--primario {
-  color: $color-texto-claro;
-  background-color: $color-primario;
-  border-color: $color-terciario-oscuro;
-  &:hover {
-    background-color: $color-primario-oscuro;
-  }
+.btn--primario {
+  color: $color-on-primary;
+  background: $color-primary;
+  border-color: color.adjust($color-primary, $lightness: 8%);
+  &:hover:not(:disabled) { background: color.adjust($color-primary, $lightness: 5%); }
 }
 
 .btn--secundario {
-  color: $color-texto-oscuro;
-  background-color: $color-secundario-claro;
-  border-color: $color-secundario-oscuro;
-  &:hover {
-    background-color: $color-secundario;
-  }
+  color: $color-text;
+  background: $color-surface-muted;
+  border-color: $color-border-strong;
+  &:hover:not(:disabled) { background: $color-surface-hover; border-color: $color-secondary; }
 }
 
- select {
-    color: $color-texto-oscuro;
-    background-color: $color-secundario-claro;
-    border-radius: 5px;
-    padding: 0.125rem 0.25rem;
-    margin: 0.5rem 0;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
- }
+.btn--danger {
+  color: $color-background;
+  background: $color-danger;
+  border-color: color.adjust($color-danger, $lightness: 7%);
+  &:hover:not(:disabled) { background: color.adjust($color-danger, $lightness: -8%); }
+}
 
+select, input, textarea {
+  color: $color-text;
+  background: $color-surface-muted;
+  border: 1px solid $color-border-strong;
+  border-radius: 8px;
+  min-height: 40px;
+  padding: .45rem .65rem;
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
 
+  &:hover { border-color: $color-text-subtle; }
+  &:focus { border-color: $color-primary; box-shadow: 0 0 0 3px rgba($color-primary, .18); }
+}
+
+select { cursor: pointer; }
+
+@media (max-width: 576px) {
+  .btn {
+    min-height: 40px;
+    padding: .45rem .7rem;
+    gap: .35rem;
+    border-radius: 8px;
+    font-size: .82rem;
+  }
+
+  select, input, textarea {
+    min-height: 38px;
+    padding: .4rem .55rem;
+    font-size: .85rem;
+  }
+}

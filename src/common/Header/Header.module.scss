@@ -1,0 +1,26 @@
+@use '../../styles/variables' as *;
+@use '../../styles/theme-mixins' as *;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  min-height: 58px;
+  padding: .4rem clamp(.75rem, 3vw, 1.5rem);
+  background: rgba($color-surface-raised, .94);
+  border-bottom: 1px solid $color-border-strong;
+  box-shadow: 0 7px 24px $color-shadow;
+  backdrop-filter: blur(14px);
+  user-select: none;
+}
+
+.logoTitulo { display: flex; align-items: center; gap: .75rem; font-family: $family-font-title; }
+.titulo { @include font-size(xxl); font-weight: 700; color: $color-text; letter-spacing: -.025em; }
+.titulo::after { content: ''; display: block; width: 45%; height: 2px; margin-top: -2px; background: $color-tertiary; border-radius: 1rem; }
+.logOutButton { width: fit-content; }
+.logo { height: 40px; width: 40px; padding: 0; filter: drop-shadow(0 3px 6px $color-shadow); }
+
+@include media-down(sm) { .header { min-height: 54px; } .titulo { @include font-size(xl); } }

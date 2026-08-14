@@ -28,7 +28,7 @@ const setFaviconDataUrl = (svgString) => {
   const dataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
 
   // Creamos/actualizamos 2 links: rel="icon" y rel="shortcut icon" (compatibilidad)
-  let link = document.getElementById("react-dynamic-favicon");
+  let link = document.querySelector('link[rel="icon"]');
   let shortcut = document.getElementById("react-dynamic-shortcut-icon");
 
   const created = {
@@ -43,6 +43,7 @@ const setFaviconDataUrl = (svgString) => {
     document.head.appendChild(link);
     created.link = true;
   }
+  link.id = "react-dynamic-favicon";
   link.type = "image/svg+xml";
   link.href = dataUrl;
 
@@ -71,9 +72,9 @@ const setFaviconDataUrl = (svgString) => {
 const FaviconUpdater = ({ primary, secondary, tertiary, size = 64 }) => {
   useEffect(() => {
     // Si no nos pasaron colores, intentamos leer CSS variables
-    const p = primary || readCssVar("--color-primario", "#242c4f");
-    const s = secondary || readCssVar("--color-secundario", "#e7ba61");
-    const t = tertiary || readCssVar("--color-terciario", "#e7ba61");
+    const p = primary || readCssVar("--color-primary", "#008080");
+    const s = secondary || readCssVar("--color-secondary", "#c0c0c0");
+    const t = tertiary || readCssVar("--color-tertiary", "#ff6f61");
 
     // Build SVG and set as favicon
     const svg = buildSvgString(p, s, t, size);

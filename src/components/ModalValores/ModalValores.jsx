@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import UserContext from '../../context/userContext'
 import getValoresMapping from "../../utils/valoresMapping";
-import { obtenerDatosUsuario } from "../../utils/firestoreHelper";
-import styles from "./estilos/modalValores.module.scss";
+import styles from "./ModalValores.module.scss";
 import bbva from "../../logos/bbva.svg"
 import bna from "../../logos/bna.svg"
 import dolares from "../../logos/dolar.svg"
@@ -10,29 +9,51 @@ import expensas from "../../logos/octopus.svg"
 import mc from "../../logos/mc.svg"
 import visa from "../../logos/visa.svg"
 import formatearMes from "../../utils/formatearMes";
-import { GrClose } from "react-icons/gr";
+import { GoArrowLeft, GoX } from "react-icons/go";
 
-export default function ModalValores({ valores, setValores, onClose, mesActual }) {
-  const { user } = useContext(UserContext);
-  const [depto, setDepto] = useState(null)
-  const [cochera, setCochera] = useState(null)
-  // const valoresMapping = getValoresMapping(depto, cochera);
+export default function ModalValores({ valores, onApply, onClose, mesActual, embedded = false }) {
+  const { profile } = useContext(UserContext);
+  const depto = profile?.depto;
+  const cochera = profile?.cochera;
   const valoresMapping = useMemo(() => getValoresMapping(depto, cochera), [depto, cochera]);
-  useEffect(() => {
-      if (!user) return;
-
-      const fetchPerfil = async () => {
-        const data = await obtenerDatosUsuario(user.uid);
-        setDepto(data.depto)
-        setCochera(data.cochera)
-      };
-
-      fetchPerfil();
-    }, [user]);
   const [localValores, setLocalValores] = useState({});
   const [localVencimientos, setLocalVencimientos] = useState({});
+  const [dirty, setDirty] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
   const sinVencimiento = ["colchon", "cajaAhorroActual", "dbRg5617", "dolares", "valorUSD"];
 
+  useEffect(() => {
+    if (embedded) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [embedded]);
+
+  useEffect(() => {
+    const preventUnload = (event) => {
+      if (!dirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", preventUnload);
+    return () => window.removeEventListener("beforeunload", preventUnload);
+  }, [dirty]);
+
+  const intentarCerrar = () => {
+    if (dirty && !window.confirm("Hay cambios sin guardar. ¿Querés descartarlos?")) return;
+    onClose();
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") intentarCerrar();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [dirty, onClose]);
 
   // Inicializamos valores con formato (coma + puntos) o vacíos
   useEffect(() => {
@@ -83,6 +104,7 @@ export default function ModalValores({ valores, setValores, onClose, mesActual }
     const { name, value } = e.target;
     if (/^[\d,]*$/.test(value) || value === "") {
       setLocalValores((prev) => ({ ...prev, [name]: value }));
+      setDirty(true);
     }
   };
 
@@ -90,6 +112,7 @@ export default function ModalValores({ valores, setValores, onClose, mesActual }
   const { name, value } = e.target;
   const cleanName = name.replace(/^venc_/, ""); // quitamos prefijo al guardar
   setLocalVencimientos((prev) => ({ ...prev, [cleanName]: value }));
+  setDirty(true);
 };
 
   // Al perder foco, aplicamos puntos automáticamente
@@ -101,14 +124,22 @@ export default function ModalValores({ valores, setValores, onClose, mesActual }
     }));
   };
 
-  const handleCerrar = () => {
+  const handleCerrar = async () => {
     const nuevosValores = {};
     Object.keys(localValores).forEach((k) => {
       nuevosValores[k] = parseNumero(localValores[k]);
       nuevosValores[`venc_${k}`] = localVencimientos[k] || "";
     });
-    setValores(nuevosValores);
-    onClose();
+    setGuardando(true);
+    setError("");
+    try {
+      await onApply(nuevosValores);
+      setDirty(false);
+    } catch (err) {
+      console.error("Error al guardar los valores:", err);
+      setError("No se pudieron guardar los cambios. Intentá nuevamente.");
+      setGuardando(false);
+    }
   };
 
 const grupos = Object.entries(valoresMapping).reduce((acc, [key, { label, group }]) => {
@@ -133,14 +164,26 @@ const groupLogos = {
   expensas: expensas,
   MasterCard: mc,
   VISA: visa,
-  "VISA (Total resumen)": visa,
+  "Total resumen": visa,
 };
 
 return (
-    <div className={styles.modalValoresOverlay}>
-        <div className={styles.modalValores}>
-           <button className={styles.closeButton} onClick={onClose}><GrClose/></button>
-            <div className={styles.modalTitulo}>INGRESAR VALORES - {formatearMes(mesActual)}</div>
+    <div className={embedded ? styles.editorPage : styles.modalValoresOverlay} onMouseDown={(event) => !embedded && event.target === event.currentTarget && intentarCerrar()}>
+        <div className={styles.modalValores} role={embedded ? undefined : "dialog"} aria-modal={embedded ? undefined : "true"} aria-labelledby="modal-valores-titulo">
+          <div className={styles.modalHeader}>
+            <button
+              className={styles.closeButton}
+              onClick={intentarCerrar}
+              aria-label={embedded ? "Volver a la planilla" : "Cerrar"}
+            >
+              {embedded ? <><GoArrowLeft /><span>Volver</span></> : <GoX />}
+            </button>
+
+            <div className={styles.modalTitulo} id="modal-valores-titulo">
+              <span className={styles.tituloAccion}>Editar planilla</span>
+              <span>{formatearMes(mesActual)}</span>
+            </div>
+          </div>
                 <div className={styles.inputs}>
                     {Object.entries(grupos).map(([group, items]) => (
                     <div key={group} className={`${styles.groups} ${groupClass[group]} ${styles.groupsDiv}`}>
@@ -162,10 +205,6 @@ return (
                           return (
                           <div key={key} className={styles.inputGroup}>
                             <div className={styles.labelLogoWrapper}>
-                              {/* {!hasLogo &&
-                              <label>{label}</label>
-                              } */}
-                              {/* <label>{label}</label> */}
                               {hasLogo && (
                                 <img
                                   src={groupLogos[label]}
@@ -173,7 +212,9 @@ return (
                                   className={styles.labelLogo}
                                 />
                               )}
+                              {(!hasLogo || label === "Total resumen") && (
                               <label className={styles.inputLabel}>{label}</label>
+                              )}
                             </div>
                             {sinVencimiento.includes(key) ? (
                               // solo el campo de monto
@@ -214,8 +255,10 @@ return (
                     ))}
                 </div>
                 <div className={styles.botones}>
-                    <button className={'btn btn--primario'} onClick={handleCerrar}>Guardar y cerrar</button>
-                    <button className={'btn btn--primario'} onClick={onClose}>Cancelar</button>
+                    <span className={dirty ? styles.estadoPendiente : styles.estadoGuardado}>{dirty ? "Cambios sin guardar" : "Sin cambios pendientes"}</span>
+                    {error && <span className={styles.error} role="alert">{error}</span>}
+                    <button className={'btn btn--secundario'} onClick={intentarCerrar}>Cancelar</button>
+                    <button className={'btn btn--primario'} disabled={!dirty || guardando} onClick={handleCerrar}>{guardando ? "Guardando…" : "Guardar cambios"}</button>
                 </div>
         </div>
     </div>

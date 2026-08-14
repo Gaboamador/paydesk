@@ -1,0 +1,228 @@
+@use 'sass:color';
+@use '../../styles/variables' as *;
+@use '../../styles/theme-mixins' as *;
+
+.tituloTablaContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .85rem;
+  padding: .35rem;
+  color: $color-text;
+}
+
+.tituloTablaContainer > div:first-child {
+  flex: 1;
+  margin: 0 auto;
+}
+
+.tituloTablaContainer > div:last-child {
+  display: flex;
+  gap: .5rem;
+}
+
+.tituloTabla {
+  color: $color-text;
+  font-family: $family-font-title;
+  font-weight: 700;
+  letter-spacing: .035em;
+  text-align: center;
+  @include font-size(xl);
+}
+
+.tablaCuentasContainer {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+.tablaCuentas {
+  width: 100%;
+  min-width: fit-content;
+  margin: 0 auto;
+  color: $color-text;
+  background: $color-surface;
+  border: 1px solid $color-border-strong;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-radius: 12px;
+  box-shadow: 0 14px 38px $color-shadow;
+  text-align: left;
+  vertical-align: middle;
+  @include font-size(md);
+
+  tr[data-bank="bbva"] {
+    background: linear-gradient(90deg, $color-bbva, color.adjust($color-bbva, $lightness: 7%));
+  }
+
+  tr[data-bank="bna"] {
+    background: linear-gradient(90deg, $color-bna, color.adjust($color-bna, $lightness: 7%));
+  }
+
+  tr[data-bank="dolares"] {
+    background: linear-gradient(90deg, $color-dolares, color.adjust($color-dolares, $lightness: 7%));
+  }
+
+  tr[data-bank="expensas"] {
+    background: linear-gradient(90deg, color.adjust($color-expensas, $lightness: -12%), $color-expensas);
+  }
+
+  tr[data-bank="totales"] {
+    background: linear-gradient(90deg, $color-surface-active, $color-surface-muted);
+    border-radius: 12px 12px 0 0;
+  }
+
+  @include media-down(md) {
+    @include font-size(sm);
+  }
+
+  @include media-down(sm) {
+    @include font-size(xs);
+  }
+
+  @include media-up(md) {
+    min-width: 600px;
+  }
+}
+
+.tablaCuentas tr {
+  border-bottom: 1px solid $color-border;
+}
+
+.tablaCuentas tr:not([data-bank]):hover {
+  background: $color-surface-hover;
+}
+
+.tablaCuentas tr:last-child {
+  border: none;
+}
+
+.tablaCuentas th,
+.tablaCuentas td {
+  padding: .65rem .75rem;
+}
+
+.tablaCuentas th {
+  color: $color-text;
+  font-family: $family-font-title;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-shadow: 0 2px 5px $color-shadow-strong;
+}
+
+.tablaCuentas td {
+  color: $color-text-muted;
+}
+
+.tablaCuentas td:nth-child(even) {
+  color: $color-text;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 570;
+  white-space: nowrap;
+}
+
+.tablaCuentas td span + span {
+  margin-left: .3rem;
+  color: $color-text-subtle;
+}
+
+.tablaCuentas td:nth-child(2) {
+  border-right: 2px solid $color-border-strong;
+}
+
+.botonesPlanilla {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: .25rem;
+}
+
+.mensaje {
+  margin: 0 0 .75rem;
+  padding: .7rem .85rem;
+  border: 1px solid $color-border;
+  border-radius: 9px;
+  text-align: center;
+  box-shadow: 0 6px 18px $color-shadow;
+}
+
+.exito {
+  color: $color-text;
+  background: rgba($color-dolares, .22);
+  border-color: rgba($color-dolares, .65);
+}
+
+.error {
+  color: $color-text;
+  background: rgba($color-danger, .18);
+  border-color: rgba($color-danger, .55);
+}
+
+.guardarPlanillaButton,
+.eliminarPlanillaButton {
+  width: fit-content;
+}
+
+@include media-down(sm) {
+  .tituloTablaContainer {
+    flex-wrap: wrap;
+  }
+
+  .tituloTablaContainer > div:first-child {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  .tablaCuentas {
+    width: 100%;
+    min-width: max-content;
+    box-shadow: 0 8px 24px $color-shadow;
+    border: none;
+  }
+
+  .tablaCuentas th,
+  .tablaCuentas td {
+    padding: .45rem .4rem;
+  }
+
+  .tablaCuentas tr:first-child th:first-child {
+    border-top-left-radius: 12px;
+  }
+
+  .tablaCuentas tr:first-child th:last-child {
+    border-top-right-radius: 12px;
+  }
+
+  .tablaCuentas tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+  }
+
+  .tablaCuentas tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+  }
+
+  .botonesPlanilla :global(.btn) {
+    width: 100%;
+  }
+}
+
+@include media-up(sm400) {
+  @include media-down(sm) {
+    .tablaCuentas {
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
+    }
+
+    .tablaCuentas th,
+    .tablaCuentas td {
+      padding-inline: .3rem;
+    }
+  }
+}

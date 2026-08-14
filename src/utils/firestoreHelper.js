@@ -8,13 +8,8 @@ import { db } from "./firebase";
  * @param {object} data - Datos de la planilla
  */
 export const guardarPlanilla = async (userId, mes, data) => {
-  try {
-    const ref = doc(db, "users", userId, "planillas", mes);
-    await setDoc(ref, data, { merge: true });
-    console.log("Planilla guardada/actualizada correctamente:", ref.path);
-  } catch (error) {
-    console.error("Error al guardar planilla:", error);
-  }
+  const ref = doc(db, "users", userId, "planillas", mes);
+  await setDoc(ref, data, { merge: true });
 };
 
 /**
@@ -45,7 +40,7 @@ export const obtenerTodasLasPlanillas = async (userId) => {
     return planillas;
   } catch (error) {
     console.error("Error al obtener todas las planillas:", error);
-    return [];
+    throw error;
   }
 };
 
@@ -62,11 +57,6 @@ export const obtenerDatosUsuario = async (userId) => {
  * Elimina la planilla de un usuario para un mes determinado
  */
 export const eliminarPlanilla = async (userId, mes) => {
-  try {
-    const ref = doc(db, "users", userId, "planillas", mes);
-    await deleteDoc(ref);
-    console.log("Planilla eliminada correctamente:", ref.path);
-  } catch (error) {
-    console.error("Error al eliminar planilla:", error);
-  }
+  const ref = doc(db, "users", userId, "planillas", mes);
+  await deleteDoc(ref);
 };

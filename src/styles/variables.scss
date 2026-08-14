@@ -1,59 +1,75 @@
 @use 'sass:color';
 @use '../styles/theme-mixins' as *;
 
-// Colores principales y variantes
-$color-primario: #008080;
-$color-secundario: #c0c0c0;
-$color-terciario: #FF6F61;
+// Main palette
+// $color-primary: #008080;
+// $color-secondary: #c0c0c0;
+// $color-tertiary: #FF6F61;
+$color-primary: #5686a6;
+$color-secondary: #aab0b9;
+$color-tertiary: #d58a62;
+$color-on-primary: #0f1822;
+$color-danger: #f08080;
 
-// Variantes
-$color-primario-claro:  lighten($color-primario, 10%);
-$color-secundario-claro: lighten($color-secundario, 10%);
-$color-terciario-claro:  lighten($color-terciario, 10%);
-$color-primario-oscuro: darken($color-primario, 10%);
-$color-secundario-oscuro: darken($color-secundario, 10%);
-$color-terciario-oscuro: darken($color-terciario, 10%);
+// Backgrounds
+$color-background: #0f121a;
+$color-surface: #171c27;
+$color-surface-raised: #1d2432;
+$color-surface-muted: #222a3a;
+$color-surface-hover: #262f42;
+$color-surface-active: #303b53;
 
-// Colores de texto y otros colores UI
-$color-texto-claro: #ffffff;
-$color-texto-oscuro: #141414;
-$color-bordes-tabla: #dddddd;
+// Text and UI colors
+$color-text: #edf1f7;
+$color-text-muted: #aab2c2;
+$color-text-subtle: #818ba0;
+$color-neutral: #cbd9f7;
+$color-border: #30384a;
+$color-border-strong: #414b62;
 
-// Colores de grupos y bancos
-$color-bbva: #001391;
-$color-bna: #005f86;
-$color-dolares: #278664;
-$color-expensas: #ed7d31;
-$color-totales: #0d0d0d;
+// Shadows
+$color-shadow: rgba(0, 0, 0, .28);
+$color-shadow-strong: rgba(0, 0, 0, .42);
+
+// Group colors
+$color-bbva: rgba(#001391, 0.5);
+$color-bna: rgba(#005f86, 0.5);
+$color-dolares: rgba(#278664, 0.5);
+$color-expensas: rgba(#ed7d31, 0.5);
+$color-totales: rgba(#0d0d0d, 0.5);
 
 // Tipografías
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
 
-$fuente-titulos: 'Red Hat Display', sans-serif;
-$fuente-contenidos: 'Red Hat Text', 'Roboto', sans-serif;
+$family-font-title: 'Red Hat Display', sans-serif;
+$family-font-content: 'Red Hat Text', 'Roboto', sans-serif;
 
 
 // root
 :root {
---color-primario: #{$color-primario};
---color-secundario: #{$color-secundario};
---color-terciario: #{$color-terciario};
---color-texto-claro: #{$color-texto-claro};
---color-texto-oscuro: #{$color-texto-oscuro};
---fuente-titulos: #{$fuente-titulos};
---fuente-contenidos: #{$fuente-contenidos};
+--color-primary: #{$color-primary};
+--color-secondary: #{$color-secondary};
+--color-tertiary: #{$color-tertiary};
+--color-danger: #{$color-danger};
+--color-text: #{$color-text};
+--family-font-title: #{$family-font-title};
+--family-font-content: #{$family-font-content};
 }
 
 
 // Barra de desplazamiento
 ::-webkit-scrollbar {
-background-color: $color-primario;
+background-color: $color-surface;
+width: 10px;
+height: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-background: $color-secundario;
+background: $color-border-strong;
+border: 2px solid $color-surface;
+border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-background: darken($color-secundario, 10%);
+background: $color-text-subtle;
 }

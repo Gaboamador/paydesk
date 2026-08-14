@@ -1,0 +1,27 @@
+@use '../../styles/variables' as *;
+
+.authContainer {
+  width: min(100%, 420px);
+  margin: clamp(1rem, 8vh, 5rem) auto 0;
+  padding: clamp(1.4rem, 5vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $color-text;
+  background: linear-gradient(145deg, $color-surface-raised, $color-surface);
+  border: 1px solid $color-border-strong;
+  border-radius: 16px;
+  box-shadow: 0 22px 60px $color-shadow-strong;
+}
+
+.authTitle { margin: 0; color: $color-text; font: 700 1.7rem/1.15 $family-font-title; text-align: center; }
+.authTitle::after { content: ''; display: block; width: 3rem; height: 3px; margin: .75rem auto 0; border-radius: 2rem; background: $color-primary; }
+.authInputContainer { display: flex; flex-direction: column; gap: 1rem; }
+.authInputGroup { display: flex; flex-direction: column; align-items: stretch; }
+.authLabel { padding: 0 0 .4rem; color: $color-text-muted; font-size: .9rem; font-weight: 600; }
+.authInput { width: 100%; background: $color-surface-muted; font-family: $family-font-content; }
+.authError { padding: .75rem; color: $color-text; background: rgba($color-danger, .18); border: 1px solid rgba($color-danger, .55); border-radius: 9px; }
+.passwordWrapper { position: relative; display: flex; align-items: center; width: 100%; }
+.passwordWrapper .authInput { flex: 1; padding-right: 4.6rem; }
+.showPasswordButton { position: absolute; right: .5rem; min-height: 32px; padding: 0 .35rem; color: $color-primary; background: none; border: 0; cursor: pointer; font-size: .82rem; font-weight: 650; }
+.loginButton { width: 100%; }
