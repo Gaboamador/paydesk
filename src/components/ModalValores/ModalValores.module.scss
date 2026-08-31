@@ -86,6 +86,7 @@
 .labelLogoWrapper { display: flex; align-items: center; gap: .5rem; min-width: 0; }
 .inputLabel { margin-right: 1rem; color: $color-text-muted; font-weight: 580; }
 .inputGroup input { width: 128px; min-height: 40px; padding: .4rem .55rem; text-align: right; color: $color-text; background: $color-surface-muted; border-color: $color-border-strong; }
+.inputGroup input[aria-invalid="true"] { border-color: $color-danger; box-shadow: 0 0 0 3px rgba($color-danger, .16); }
 
 .groupLogosDiv { display: flex; justify-content: center; align-items: center; min-height: 30px; padding: 6px; }
 .groupLogo { width: auto; max-width: 116px; height: 30px; padding: 5px 10px; object-fit: contain; background: $color-text; border-radius: 7px; box-shadow: 0 3px 10px $color-shadow-strong; }

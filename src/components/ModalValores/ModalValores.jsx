@@ -10,6 +10,12 @@ import mc from "../../logos/mc.svg"
 import visa from "../../logos/visa.svg"
 import formatearMes from "../../utils/formatearMes";
 import { GoArrowLeft, GoX } from "react-icons/go";
+import {
+  esEntradaNumericaPermitida,
+  formatearNumeroLocalizado,
+  parseNumeroLocalizado,
+  prepararNumeroParaEdicion,
+} from "../../utils/numeros.mjs";
 
 export default function ModalValores({ valores, onApply, onClose, mesActual, embedded = false }) {
   const { profile } = useContext(UserContext);
@@ -21,6 +27,7 @@ export default function ModalValores({ valores, onApply, onClose, mesActual, emb
   const [dirty, setDirty] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
+  const [erroresCampos, setErroresCampos] = useState({});
   const sinVencimiento = ["colchon", "cajaAhorroActual", "dbRg5617", "dolares", "valorUSD"];
 
   useEffect(() => {
@@ -84,26 +91,11 @@ export default function ModalValores({ valores, onApply, onClose, mesActual, emb
   setLocalVencimientos(inicialVenc);
 }, [valores, valoresMapping]);
 
-  // Convierte texto con puntos y coma a número real
-  const parseNumero = (texto) => {
-    if (!texto) return 0;
-    const normalizado = texto.replace(/\./g, "").replace(",", ".");
-    return parseFloat(normalizado) || 0;
-  };
-
-  // Formatea número con puntos y coma para mostrar
-  const formatNumero = (num) => {
-    if (num === "" || num === null || num === undefined) return "";
-    const [entera, decimal] = num.toString().split(",");
-    const ent = entera.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return decimal ? `${ent},${decimal}` : ent;
-  };
-
-  // Cambios en tiempo real, coma permitida, puntos solo al perder foco
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (/^[\d,]*$/.test(value) || value === "") {
+    if (esEntradaNumericaPermitida(value)) {
       setLocalValores((prev) => ({ ...prev, [name]: value }));
+      setErroresCampos((prev) => ({ ...prev, [name]: false }));
       setDirty(true);
     }
   };
@@ -115,21 +107,34 @@ export default function ModalValores({ valores, onApply, onClose, mesActual, emb
   setDirty(true);
 };
 
-  // Al perder foco, aplicamos puntos automáticamente
-  const handleBlur = (name, event) => {
-    // const value = event.target.value; 
-    setLocalValores((prev) => ({
-      ...prev,
-      [name]: formatNumero(prev[name]),
-    }));
+  const handleFocus = (name, event) => {
+    setLocalValores((prev) => ({ ...prev, [name]: prepararNumeroParaEdicion(prev[name]) }));
+    event.target.select();
+  };
+
+  const handleBlur = (name) => {
+    setLocalValores((prev) => {
+      const formateado = formatearNumeroLocalizado(prev[name]);
+      const invalido = formateado === null;
+      setErroresCampos((erroresPrevios) => ({ ...erroresPrevios, [name]: invalido }));
+      return invalido ? prev : { ...prev, [name]: formateado };
+    });
   };
 
   const handleCerrar = async () => {
     const nuevosValores = {};
+    const nuevosErrores = {};
     Object.keys(localValores).forEach((k) => {
-      nuevosValores[k] = parseNumero(localValores[k]);
+      const numero = parseNumeroLocalizado(localValores[k]);
+      nuevosErrores[k] = numero === null;
+      nuevosValores[k] = numero;
       nuevosValores[`venc_${k}`] = localVencimientos[k] || "";
     });
+    if (Object.values(nuevosErrores).some(Boolean)) {
+      setErroresCampos(nuevosErrores);
+      setError("Revisá los importes marcados antes de guardar.");
+      return;
+    }
     setGuardando(true);
     setError("");
     try {
@@ -220,11 +225,13 @@ return (
                               // solo el campo de monto
                               <input
                                 type="text"
+                                inputMode="decimal"
                                 name={key}
                                 value={localValores[key] || ""}
                                 onChange={handleChange}
-                                onBlur={(e) => handleBlur(key, e)}
-                                onFocus={(e) => e.target.select()}
+                                onBlur={() => handleBlur(key)}
+                                onFocus={(e) => handleFocus(key, e)}
+                                aria-invalid={erroresCampos[key] || undefined}
                                 placeholder="Monto"
                               />
                             ) : (
@@ -240,11 +247,13 @@ return (
                                 />
                                 <input
                                   type="text"
+                                  inputMode="decimal"
                                   name={key}
                                   value={localValores[key] || ""}
                                   onChange={handleChange}
                                   onBlur={() => handleBlur(key)}
-                                  onFocus={(e) => e.target.select()}
+                                  onFocus={(e) => handleFocus(key, e)}
+                                  aria-invalid={erroresCampos[key] || undefined}
                                   placeholder="Monto"
                                 />
                               </div>
